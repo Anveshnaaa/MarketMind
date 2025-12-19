@@ -13,6 +13,20 @@ We analyzed over **1 million startup records** to identify patterns in how diffe
 
 Think of it as having a data analyst in your pocket who's studied a million startups and can tell you what works and what doesn't.
 
+### Dashboard Preview
+
+<p align="center">
+  <img src="Screenshot 2025-12-19 at 3.31.23 AM.png" alt="MarketMind Dashboard - Discover Opportunities" width="800"/>
+  <br/>
+  <em>Discover high-potential startup opportunities with smart filtering</em>
+</p>
+
+<p align="center">
+  <img src="Screenshot 2025-12-19 at 3.33.33 AM.png" alt="MarketMind Dashboard - Evaluate Idea" width="800"/>
+  <br/>
+  <em>Evaluate your startup idea against real market data</em>
+</p>
+
 ## The Tech Behind It
 
 We built this using a **MongoDB Sharded Cluster** - basically a distributed database that can handle massive amounts of data by splitting it across multiple servers. Here's what's running:
