@@ -1,6 +1,6 @@
-# Startup Market Analyzer 🚀
+# Startup Market Analyzer 
 
-Hey! This is my big data capstone project where I built a distributed system to analyze startup data and help people make smarter business decisions.
+Hey! This is my big data capstone project where we built a distributed system to analyze startup data and help people make smarter business decisions.
 
 ## What Does This Do?
 
@@ -15,7 +15,7 @@ Think of it as having a data analyst in your pocket who's studied a million star
 
 ## The Tech Behind It
 
-I built this using a **MongoDB Sharded Cluster** - basically a distributed database that can handle massive amounts of data by splitting it across multiple servers. Here's what's running:
+We built this using a **MongoDB Sharded Cluster** - basically a distributed database that can handle massive amounts of data by splitting it across multiple servers. Here's what's running:
 
 - **10 Docker containers** working together as one big database
 - **1 Mongos Router** - the "front desk" that routes your queries
@@ -66,20 +66,17 @@ You'll need these installed:
 - **Python 3.10+** 
 - **UV package manager** (it's like pip but way faster)
 
-**Don't have UV?** Install it:
-```bash
-# macOS/Linux - one line install
+
+# Step 1: install uv
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Or if you prefer pip
-pip install uv
-```
+
 
 ### Step 2: Clone and Setup
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/YOUR_USERNAME/bigdataa.git
+git clone https://github.com/anveshnaaa/startup-market-analyser.git
 cd bigdataa
 
 # 2. Install Python dependencies (UV does this fast!)
