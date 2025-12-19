@@ -18,13 +18,13 @@ Think of it as having a data analyst in your pocket who's studied a million star
 ### Dashboard Preview
 
 <p align="center">
-  <img src="Screenshot 2025-12-19 at 3.31.23 AM.png" alt="MarketMind Dashboard - Discover Opportunities" width="800"/>
+  <img src="images/1.png" alt="MarketMind Dashboard - Discover Opportunities" width="800"/>
   <br/>
   <em>Discover high-potential startup opportunities with smart filtering</em>
 </p>
 
 <p align="center">
-  <img src="Screenshot 2025-12-19 at 3.33.33 AM.png" alt="MarketMind Dashboard - Evaluate Idea" width="800"/>
+  <img src="images/2.png" alt="MarketMind Dashboard - Evaluate Idea" width="800"/>
   <br/>
   <em>Evaluate your startup idea against real market data</em>
 </p>
