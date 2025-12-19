@@ -77,7 +77,7 @@ You'll need these installed:
 ```bash
 # 1. Clone the repo
 git clone https://github.com/anveshnaaa/MarketMind.git
-cd startup-market-analyser
+cd MarketMind
 
 # 2. Install Python dependencies (UV does this fast!)
 uv sync
