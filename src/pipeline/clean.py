@@ -52,8 +52,12 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     for col in text_cols:
         if col in df.columns:
             df[col] = df[col].astype(str).str.strip()
-            # Replace 'nan' strings with empty
-            df[col] = df[col].replace("nan", "")
+            # Replace 'nan' strings with placeholder for required fields
+            if col in ["name", "sector"]:
+                df[col] = df[col].replace("nan", "Unknown")
+                df[col] = df[col].replace("", "Unknown")
+            else:
+                df[col] = df[col].replace("nan", "")
 
     # Normalize sector
     if "sector" in df.columns:
@@ -73,6 +77,15 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
             df["last_funding_date"], errors="coerce"
         )
 
+    # Filter out invalid records before deduplication
+    logger.info("Filtering invalid records...")
+    before_filter = len(df)
+    # Remove rows with invalid sectors or names
+    df = df[df["sector"].notna() & (df["sector"] != "") & (df["sector"] != "Unknown")]
+    df = df[df["name"].notna() & (df["name"] != "") & (df["name"] != "Unknown")]
+    filtered = before_filter - len(df)
+    logger.info(f"Filtered {filtered:,} invalid records")
+    
     # Remove duplicates
     logger.info("Removing duplicates...")
     before_dedup = len(df)
@@ -155,6 +168,10 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
             validation_errors += 1
             if validation_errors <= 10:  # Log first 10 errors
                 logger.warning(f"Validation error for record {row.get('name', 'unknown')}: {e}")
+            elif validation_errors == 100:
+                logger.warning(f"...100 validation errors so far...")
+            elif validation_errors % 10000 == 0:
+                logger.warning(f"...{validation_errors:,} validation errors so far...")
 
     logger.info(f"Validated {len(clean_records):,} records ({validation_errors:,} errors)")
 

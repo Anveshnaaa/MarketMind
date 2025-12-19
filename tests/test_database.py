@@ -1,7 +1,7 @@
 """Tests for database operations."""
 
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, MagicMock, patch
 
 from src.database.connection import get_mongo_client, get_database
 from src.database.operations import count_documents, insert_documents
@@ -22,7 +22,7 @@ def test_get_mongo_client(mock_mongo_client: Mock) -> None:
 @patch("src.database.connection.get_mongo_client")
 def test_get_database(mock_get_client: Mock) -> None:
     """Test database retrieval."""
-    mock_client = Mock()
+    mock_client = MagicMock()
     mock_db = Mock()
     mock_client.__getitem__.return_value = mock_db
     mock_get_client.return_value = mock_client
@@ -36,7 +36,7 @@ def test_count_documents(mock_get_db: Mock) -> None:
     """Test document counting."""
     mock_collection = Mock()
     mock_collection.count_documents.return_value = 100
-    mock_db = Mock()
+    mock_db = MagicMock()
     mock_db.__getitem__.return_value = mock_collection
     mock_get_db.return_value = mock_db
 
@@ -52,7 +52,7 @@ def test_insert_documents(mock_get_db: Mock) -> None:
     mock_result = Mock()
     mock_result.inserted_ids = ["id1", "id2", "id3"]
     mock_collection.insert_many.return_value = mock_result
-    mock_db = Mock()
+    mock_db = MagicMock()
     mock_db.__getitem__.return_value = mock_collection
     mock_get_db.return_value = mock_db
 

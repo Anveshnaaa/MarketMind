@@ -39,7 +39,7 @@ Want to see the full architecture? Check out [ARCHITECTURE.md](ARCHITECTURE.md) 
 ## Project Structure
 
 ```
-bigdataa/
+MarketMind/
 ├── src/
 │   ├── __init__.py
 │   ├── models/          # Pydantic models
@@ -84,8 +84,6 @@ uv sync
 
 # 3. Start the MongoDB cluster (10 containers)
 docker-compose up -d
-
-# 4. Wait about 60 seconds for everything to initialize
 
 ```
 
@@ -241,7 +239,7 @@ The high-level sector summaries. Not sharded (it's tiny!) but heavily indexed fo
 ## Project Structure
 
 ```
-bigdataa/
+MarketMind/
 ├── src/
 │   ├── models/          # Pydantic schemas
 │   ├── pipeline/        # Data processing (ingest, clean, aggregate)
