@@ -1,0 +1,203 @@
+services:
+  # Config Servers (3-node replica set)
+  config1:
+    image: mongo:7.0
+    container_name: config1
+    command: mongod --configsvr --replSet configReplSet --port 27017 --bind_ip_all
+    ports:
+      - "27019:27017"
+    volumes:
+      - config1-data:/data/db
+    networks:
+      - mongodb-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+  config2:
+    image: mongo:7.0
+    container_name: config2
+    command: mongod --configsvr --replSet configReplSet --port 27017 --bind_ip_all
+    volumes:
+      - config2-data:/data/db
+    networks:
+      - mongodb-network
+
+  config3:
+    image: mongo:7.0
+    container_name: config3
+    command: mongod --configsvr --replSet configReplSet --port 27017 --bind_ip_all
+    volumes:
+      - config3-data:/data/db
+    networks:
+      - mongodb-network
+
+  # Shard 1 Replica Set
+  shard1-a:
+    image: mongo:7.0
+    container_name: shard1-a
+    command: mongod --shardsvr --replSet shard1rs --port 27017 --bind_ip_all
+    ports:
+      - "27020:27017"
+    volumes:
+      - shard1a-data:/data/db
+    networks:
+      - mongodb-network
+
+  shard1-b:
+    image: mongo:7.0
+    container_name: shard1-b
+    command: mongod --shardsvr --replSet shard1rs --port 27017 --bind_ip_all
+    volumes:
+      - shard1b-data:/data/db
+    networks:
+      - mongodb-network
+
+  shard1-c:
+    image: mongo:7.0
+    container_name: shard1-c
+    command: mongod --shardsvr --replSet shard1rs --port 27017 --bind_ip_all
+    volumes:
+      - shard1c-data:/data/db
+    networks:
+      - mongodb-network
+
+  # Shard 2 Replica Set
+  shard2-a:
+    image: mongo:7.0
+    container_name: shard2-a
+    command: mongod --shardsvr --replSet shard2rs --port 27017 --bind_ip_all
+    ports:
+      - "27021:27017"
+    volumes:
+      - shard2a-data:/data/db
+    networks:
+      - mongodb-network
+
+  shard2-b:
+    image: mongo:7.0
+    container_name: shard2-b
+    command: mongod --shardsvr --replSet shard2rs --port 27017 --bind_ip_all
+    volumes:
+      - shard2b-data:/data/db
+    networks:
+      - mongodb-network
+
+  shard2-c:
+    image: mongo:7.0
+    container_name: shard2-c
+    command: mongod --shardsvr --replSet shard2rs --port 27017 --bind_ip_all
+    volumes:
+      - shard2c-data:/data/db
+    networks:
+      - mongodb-network
+
+  # Mongos Router
+  mongos:
+    image: mongo:7.0
+    container_name: mongos
+    command: mongos --configdb configReplSet/config1:27017,config2:27017,config3:27017 --bind_ip_all --port 27017
+    ports:
+      - "27017:27017"
+    depends_on:
+      config1:
+        condition: service_healthy
+    networks:
+      - mongodb-network
+
+  # Initialization Container
+  mongo-init:
+    image: mongo:7.0
+    container_name: mongo-init
+    depends_on:
+      - mongos
+      - config1
+      - config2
+      - config3
+      - shard1-a
+      - shard1-b
+      - shard1-c
+      - shard2-a
+      - shard2-b
+      - shard2-c
+    networks:
+      - mongodb-network
+    entrypoint: >
+      bash -c "
+        echo 'Waiting for services to start...'
+        sleep 20
+        
+        echo 'Initializing config server replica set...'
+        mongosh --host config1:27017 --eval '
+          rs.initiate({
+            _id: \"configReplSet\",
+            configsvr: true,
+            members: [
+              { _id: 0, host: \"config1:27017\" },
+              { _id: 1, host: \"config2:27017\" },
+              { _id: 2, host: \"config3:27017\" }
+            ]
+          })
+        '
+        
+        sleep 10
+        
+        echo 'Initializing shard1 replica set...'
+        mongosh --host shard1-a:27017 --eval '
+          rs.initiate({
+            _id: \"shard1rs\",
+            members: [
+              { _id: 0, host: \"shard1-a:27017\" },
+              { _id: 1, host: \"shard1-b:27017\" },
+              { _id: 2, host: \"shard1-c:27017\" }
+            ]
+          })
+        '
+        
+        echo 'Initializing shard2 replica set...'
+        mongosh --host shard2-a:27017 --eval '
+          rs.initiate({
+            _id: \"shard2rs\",
+            members: [
+              { _id: 0, host: \"shard2-a:27017\" },
+              { _id: 1, host: \"shard2-b:27017\" },
+              { _id: 2, host: \"shard2-c:27017\" }
+            ]
+          })
+        '
+        
+        sleep 15
+        
+        echo 'Adding shards to cluster...'
+        mongosh --host mongos:27017 --eval '
+          sh.addShard(\"shard1rs/shard1-a:27017,shard1-b:27017,shard1-c:27017\")
+          sh.addShard(\"shard2rs/shard2-a:27017,shard2-b:27017,shard2-c:27017\")
+        '
+        
+        echo 'Enabling sharding on startup_analytics database...'
+        mongosh --host mongos:27017 --eval '
+          sh.enableSharding(\"startup_analytics\")
+        '
+        
+        echo 'Sharded cluster setup complete!'
+        mongosh --host mongos:27017 --eval 'sh.status()'
+      "
+    restart: "no"
+
+volumes:
+  config1-data:
+  config2-data:
+  config3-data:
+  shard1a-data:
+  shard1b-data:
+  shard1c-data:
+  shard2a-data:
+  shard2b-data:
+  shard2c-data:
+
+networks:
+  mongodb-network:
+    driver: bridge
