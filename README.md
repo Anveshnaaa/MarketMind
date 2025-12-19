@@ -64,7 +64,7 @@ bigdataa/
 You'll need these installed:
 - **Docker Desktop** (or Docker + Docker Compose)
 - **Python 3.10+** 
-- **UV package manager** (it's like pip but way faster)
+- **UV package manager** (
 
 
 #  install uv
@@ -76,8 +76,8 @@ You'll need these installed:
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/anveshnaaa/startup-market-analyser.git
-cd bigdataa
+git clone https://github.com/anveshnaaa/MarketMind.git
+cd startup-market-analyser
 
 # 2. Install Python dependencies (UV does this fast!)
 uv sync
