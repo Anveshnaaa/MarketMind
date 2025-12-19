@@ -6,7 +6,7 @@ Hey! This is my big data capstone project where we built a distributed system to
 
 Ever wondered which startup sectors are actually worth getting into? Or if your startup idea has a good chance of success based on historical data? That's exactly what this project does.
 
-I analyzed over **1 million startup records** to identify patterns in how different business sectors perform over time. The system has two main features:
+We analyzed over **1 million startup records** to identify patterns in how different business sectors perform over time. The system has two main features:
 
 1. **Find Your Startup Idea** - Discover high-potential sectors based on your budget, risk appetite, and goals
 2. **Evaluate Your Idea** - Check how your startup concept stacks up against historical market data
@@ -86,7 +86,7 @@ uv sync
 docker-compose up -d
 
 # 4. Wait about 60 seconds for everything to initialize
-# Grab a coffee ☕ - the cluster needs time to elect leaders
+
 ```
 
 ### Step 3: Verify Everything Works
@@ -120,7 +120,7 @@ uv run python -m src.pipeline.aggregate
 uv run streamlit run dashboard/app.py
 
 # Open your browser to: http://localhost:8501
-# Play around with the "Discover Opportunities" feature! 🎯
+
 ```
 
 **That's it!** You now have a fully functional distributed big data system running locally.
@@ -162,7 +162,6 @@ This launches a beautiful web interface where you can:
 
 ### Running Everything at Once
 
-Lazy like me? Run the whole pipeline:
 
 ```bash
 # Option 1: Using the Makefile
@@ -177,7 +176,7 @@ bash scripts/run_pipeline.sh
 
 ## Testing & Quality Checks
 
-I'm a stickler for quality, so there are tests and type checks:
+
 
 ```bash
 # Run all tests with coverage report
@@ -198,15 +197,15 @@ uv run python scripts/query_examples.py
 Here's the journey of a single startup record:
 
 ```
-📄 Raw CSV/JSON Data
+ Raw CSV/JSON Data
     ↓
-🔽 Ingestion Pipeline → MongoDB [raw_startups] (1M rows, sharded)
+Ingestion Pipeline → MongoDB [raw_startups] (1M rows, sharded)
     ↓
-🧹 Cleaning Pipeline → MongoDB [clean_startups] (validated, sharded by sector)
+Cleaning Pipeline → MongoDB [clean_startups] (validated, sharded by sector)
     ↓
-📊 Aggregation Pipeline → MongoDB [aggregated_sectors] (~20 sector summaries)
+Aggregation Pipeline → MongoDB [aggregated_sectors] (~20 sector summaries)
     ↓
-🎨 Streamlit Dashboard → Beautiful interactive visualizations
+Streamlit Dashboard → Beautiful interactive visualizations
 ```
 
 The sharding means queries are split across multiple database nodes for speed. When you search for "Fintech" startups, both shards work in parallel!
@@ -215,10 +214,10 @@ The sharding means queries are split across multiple database nodes for speed. W
 
 I've got 3 main collections in MongoDB:
 
-### 📦 `raw_startups` (1M+ rows)
+###  `raw_startups` (1M+ rows)
 The original data, no questions asked. Sharded using **hashed `_id`** so writes are evenly distributed across servers.
 
-### ✨ `clean_startups` (1M+ rows) 
+###  `clean_startups` (1M+ rows) 
 The cleaned, validated, production-ready data. Sharded using **`{ sector, _id }`** which is smart because:
 - All "Fintech" startups live on the same shard
 - Sector-based queries are lightning fast
@@ -255,38 +254,6 @@ bigdataa/
 └── pyproject.toml       # Python dependencies (managed by UV)
 ```
 
-## Why I Built It This Way
-
-**MongoDB Sharded Cluster** - Horizontal scaling for big data. As the dataset grows, I can just add more shards.
-
-**Pydantic Validation** - Catches bad data before it pollutes the database. Type-safe, self-documenting.
-
-**Three-Layer Pipeline** - Separation of concerns. Raw data stays raw, cleaned data is validated, aggregates are pre-computed.
-
-**Docker Compose** - One command deploys 10 containers. No "works on my machine" problems.
-
-**UV Instead of Pip** - Installs packages 10-100x faster. Dependency resolution that actually works.
-
-**Streamlit** - Build a web UI with pure Python. No React, no Vue, no JavaScript headaches.
-
-## What This Project Demonstrates
-
-✅ **Big Data Platform**: MongoDB Sharded Cluster (10 nodes)  
-✅ **Large Dataset**: 1 million rows, 8+ columns  
-✅ **Distributed Architecture**: Docker Compose with automatic sharding  
-✅ **ETL Pipeline**: Ingestion → Cleaning → Aggregation  
-✅ **Data Quality**: Pydantic validation, deduplication, standardization  
-✅ **Type Safety**: MyPy strict mode throughout  
-✅ **Testing**: PyTest with multiple test files  
-✅ **Performance**: Smart shard keys, secondary indexes  
-✅ **Visualization**: Interactive Streamlit dashboard  
-✅ **Production Practices**: Logging, error handling, proper project structure
-
----
-
-## License
-
-MIT - Do whatever you want with this code!
 
 Built with ☕ and late nights by Anveshna
 
