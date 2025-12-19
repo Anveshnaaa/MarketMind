@@ -67,8 +67,8 @@ You'll need these installed:
 - **UV package manager** (it's like pip but way faster)
 
 
-# Step 1: install uv
-curl -LsSf https://astral.sh/uv/install.sh | sh
+#  install uv
+
 
 
 
